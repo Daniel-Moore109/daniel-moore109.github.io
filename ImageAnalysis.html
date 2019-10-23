@@ -557,205 +557,6 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
 </section>
 </section>
 
-
-
-<!-- ---------------------- APPLICATIONS BATCH PROCESSING -------------------------- -->
-
-
-
-<section data-menu-title="Batch Processing" data-state="apps20z"><style>.apps20z header:after { content: ""; }</style>
-<h1>Applications: Batch Processing</h1>
-<h4>Why batch process? File conversion, batch processing, scripting</h4>
-</section>
-
-
-<section data-state="apps20"><style>.apps20 header:after { content: "Batch Processing: Theory"; }</style>
-<p>Manual analysis (while sometimes necessary) can be laborious, error prone and not provide the provenance required. Batch processing allows the same processing to be run on multiple images.</p>
-
-<p>The built-in <code>[Process > Batch]</code> menu has lots of useful functions:</p>
-<img class="half" src="img-ia/batch_01.png"/>
-</section> 
-
-<section data-state="apps21"><style>.apps21 header:after { content: "Batch Processing: Data"; }</style>
-<p>We'll use a subset of dataset BBBC008 from the <a href="https://data.broadinstitute.org/bbbc/BBBC008/" target="_blank">Broad Bioimage Benchmark Collection</a></p>
-<ul><li>Download the zip file from <a href="material/BBBC008_partial.zip">here</a> to the desktop</li><li>Unzip (right click and "Extract All") to end up with a folder on your desktop called <code>BBBC008_partial</code></li></ul><br>
-<img class="" src="img-ia/batch_04.png"/>
-<ul><li>Make another folder on the desktop called <code>Output</code></li><ul>
-</section> 
-<section data-state="apps22"><style>.apps22 header:after { content: "Batch Processing: Batch Convert"; }</style>
-<p>For simple file conversion, <code>Convert</code> is a very useful tool</p>
-<ul class="twothirds left"><li>Run <code>[Process > Batch > Convert]</code></li>
-<ul><li>Set the Input directory to point to the downloaded files and the Output to the Output folder</li>
-<li>Set the output format to PNG</li>
-<li>Scale the images to 50% (put 0.5 in the box)</li></ul>
-<li>Hit Convert then check the output folder</li>
-</ul>
-<img class="third right" src="img-ia/batch_03.png"/>
-
-<ul class="clear"><li>If you're using proprietary formats check the "Read Using Bio-Formats" box (although this is slower)</li></ul>
-</section> 
-
-<section data-state="apps23"><style>.apps23 header:after { content: "Batch Processing: Basic Macros"; }</style>
-<p>For slightly more complex manipulations try using the <code>Macro</code> interface</p>
-<ul class="half left"><li>Run <code>[Process > Batch > Macro]</code></li>
-<ul><li>Set the Input directory to point to the downloaded files and the Output to the Output folder</li>
-<li>Set the output format to PNG</li>
-<li>From the dropdown box, select <code>Scale</code> and the macro box will populate</li>
-<li>Change the scale fraction to 0.5 and add the line <code>run("Red");</code></li></ul>
-<li>Hit Process then check the output folder</li>
-</ul>
-<img class="half right" src="img-ia/batch_07.png"/>
-</section> 
-<section data-state="apps23"><style>.apps23 header:after { content: "Batch Processing: Basic Macros"; }</style>
-<p>You should see an output folder containing small red-coloured nuclei</p>
-<img class="twothirds" src="img-ia/batch_09.png"/>
-</section> 
-<section data-state="apps23"><style>.apps23 header:after { content: "Batch Processing: Basic Macros"; }</style>
-<p>But how to figure out the commands?</p>
-<img class="fragment half" src="img-ia/batch_08.png"/>
-<p class="fragment">The macro recorder will record most plugins and commands from the menu. Run <code>[Plugins > Macros > Record]</code> then run a command</p>
-</section> 
-<section data-state="apps23"><style>.apps23 header:after { content: "Batch Processing: Batch Macros"; }</style>
-<div class="twothirds left">
-<p>Pop quiz!</p>
-<ul><p>Use the macro recorder and The Batch Macro function to:
-<li>Calibrate the image to 0.1 microns per pixel (<a href="#/19"><i class="fa fa-external-link"></i></a>)</li>
-<li>Draw a 10&mu;m green scale bar in the bottom left corner (<a href="#/36"><i class="fa fa-external-link"></i></a>)</li>
-<li class="fragment">[BONUS MARKS 1] Also write the filename onto each image (in red) (<a href="https://imagej.nih.gov/ij/developer/macro/functions.html#getTitle"><i class="fa fa-external-link"></i></a>)</li>
-<li class="fragment">[BONUS MARKS 2] Print out the filename and spot count to the log (<a href="https://imagej.nih.gov/ij/docs/guide/146-29.html#sub:Find-Maxima"><i class="fa fa-external-link"></i></a>)</li>
-</li></ul>
-</div>
-<img class="third right" src="img-ia/batch_12.png"/>
-<ul class="left clear"><li>Answers in the next slide - DON'T PEEK UNLESS YOU'RE STUCK :)</li></ul>
-</section> 
-
-<section data-state="apps23"><style>.apps23 header:after { content: "Batch Processing: Basic Macros"; }</style>
-<div class="twothirds left">
-<p>Basic test</p>
-<!-- <pre><code data-trim data-noescape> -->
-<pre><code data-trim data-noescape>
-//-- Calibrate
-run("Properties...", "unit=um pixel_width=0.1 pixel_height=0.1");
-//-- Add the scale bar
-run("RGB Color");
-run("Scale Bar...", "width=10 height=10 font=30 color=Green background=None location=[Lower Left]");
-</code></pre>
-<div data-fragment-index="5" class="fragment">
-<p>Advanced test</p>
-<pre><code data-trim data-noescape>
-//-- [BONUS 2] Estimate and print the counts
-run("Find Maxima...", "noise=10 output=[Point Selection]");
-getSelectionCoordinates(xPos,yPos);
-print("Image:  "+getTitle()+" has "+xPos.length+" objects");
-run("Select None");
-
-//-- [BONUS 1] Add the title
-run("RGB Color");
-setFont("SansSerif", 18, "antialiased");
-setColor("red");
-drawString(getTitle(), 20, 30);
-
-//-- Calibrate
-run("Properties...", "unit=um pixel_width=0.1 pixel_height=0.1");
-//-- Add the scale bar
-run("RGB Color");
-run("Scale Bar...", "width=10 height=10 font=30 color=Green background=None location=[Lower Left]");
-</code></pre>
-</div>
-</div>
-<img data-fragment-index="5" class="fragment third right" src="img-ia/batch_10.png"/><img data-fragment-index="5" class="fragment third right" src="img-ia/batch_11.png"/>
-</section>
-
-<section data-menu-title="Scripting" data-state="apps24z"><style>.apps24z header:after { content: ""; }</style>
-<h1>Scripting</h1>
-<h4>A very brief foray into scripts</h4>
-</section>
-
-<section data-state="apps24"><style>.apps24 header:after { content: "Scripting"; }</style>
-<p>Scripting is useful for running the same process multiple times or having a record of how images were processed to get a particular output</p>
-<p>Fiji supports many scripting languages including Java, Python, Scala, Ruby, Clojure and Groovy through the script editor which also recognises the macro language from the previous example (which we'll be using)</p>
-<!-- <p class="fragment" >Run <code>[Plugins > New > Macro]</code></p></div> -->
-<img class="half fragment" src="img-ia/script01.PNG"/>
-</section>
-
-<section data-state="apps24"><style>.apps24 header:after { content: "Scripting"; }</style>
-<p>As an example, we're going to (manually) create a montage from a three channel image, then see what the script looks like</p>
-<img class="third" src="img-ia/script3.png"/>
-<ul>
-<li>Open <a href="material/06-multichannel.tif"><code>06-MultiChannel.tif</code></a></li>
-<li>Open the macro recorder: <code>[Plugins > Macros > Record]</code></li>
-</ul>
-</section>
-
-<section data-state="apps24"><style>.apps24 header:after { content: "Scripting"; }</style>
-<ul style="font-size:70%" class="twothirds">
-<li>(If opening via URL run <code>[Image > Hyperstacks > Stack to Hyperstack]</code>)</li>
-<li>Open the channels tool <code>[Image > Color > Channels Tool]</code> and set the mode to <code>grayscale</code></li>
-<li>Run <code>[Image > Type > RGB color]</code></li>
-<li>Rename this image to <code>channels</code> with <code>[Image > Rename]</code></li>
-<li>Select the original stack, and using the channels tool, set the mode to <code>composite</code></li>
-<li>Run <code>[Image > Type > RGB color]</code></li>
-<li>Rename this image to <code>merge</code> with <code>[Image > Rename]</code></li>
-<li>Close the original (it should be the only 8-bit image open (check the Info bar!)</li>
-<li>Run <code>[Image > Stacks > Tools > Concatenate]</code> and select Channels and merge in the two boxes (see right)</li>
-<li>Run <code>[Image > Stacks > Make Montage]</code> change the border width to 3 then hit OK</li>
-<!-- <li>Run <code>[File > Save As > PNG]</code> and save the file in the output directory</li> -->
-</ul>
-<img class="third" src="img-ia/script02.png">
-<p class="clear fragment">Got it? Have a look at the Macro Recorder and see if you can see the commands you ran</p>
-</section>
-
-<section data-state="apps24"><style>.apps24 header:after { content: "Scripting"; }</style>
-<p>Open the script editor with <code>[Plugins > New > Script]</code> and copy in the following code:</p>
-<pre><code class="java" data-trim data-noescape>
-//-- Record the filename
-imageName=getTitle();
-print("Processing: "+imageName);
-//-- Display the stack in greyscale, create an RGB version, rename
-Stack.setDisplayMode("grayscale");
-run("RGB Color");
-rename("channels");
-//-- Select the original image
-selectWindow(imageName);
-//-- Display the stack in composite, create an RGB version, rename
-Stack.setDisplayMode("composite");
-run("RGB Color");
-rename("merge");
-//-- Close the original
-close(imageName);
-//-- Put the two RGB images together
-run("Concatenate...", "  title=newStack open image1=channels image2=merge");
-//-- Create a montage
-run("Make Montage...", "columns=4 rows=1 scale=0.50 border=3");
-//-- Close the stack (from concatenation)
-close(newStack);
-</code></pre>
-<p>Open the file again and hit Run</p>
-<p class="subtle fragment">Comments, variables, print, active window</p>
-</section>
-
-<section data-state="apps24"><style>.apps24 header:after { content: "Scripting"; }</style>
-<p>This script operates on an open image but it's easily converted to a batch processing script using the built in templates:</p>
-<img class="half" src="img-ia/script04.png"/>
-<p>The full script is <a href="material/Process_Folder_montage.ijm">here</a>. I added these lines at the top and bottom:</p>
-<pre><code class="java">open(input + File.separator + file);</code></pre>
-<pre><code class="java">saveAs("png", output + File.separator + replace(file, suffix, ".png"));
-close("*");
-</code></pre>
-</section>
-
-<section data-state="apps24"><style>.apps24 header:after { content: "Scripting"; }</style>
-<p>If you're interested in a scripting workshop, let me know! We can put one together in the near future.</p>
-<p>In the meantime:</p>
-<ul>
-<li><a href="https://imagej.nih.gov/ij/developer/macro/macros.html" target="_blank">ImageJ language reference</a></li>
-<li><a href="https://imagej.nih.gov/ij/developer/macro/functions.html" target="_blank">ImageJ function reference</a></li>
-<li><a href="https://postacquisition.wordpress.com/2017/08/29/staying-in-version-control/" target="_blank">Getting started with Version Control for scripting</a></li>
-</ul>
-</section>
-
-
-
 <!-- ---------------------- APPLICATIONS COLOCALISTATION -------------------------- -->
 
 
@@ -1037,7 +838,200 @@ close("*");
 </section>
 
 
+<!-- ---------------------- APPLICATIONS BATCH PROCESSING -------------------------- -->
 
+
+
+<section data-menu-title="Batch Processing" data-state="apps20z"><style>.apps20z header:after { content: ""; }</style>
+<h1>Applications: Batch Processing</h1>
+<h4>Why batch process? File conversion, batch processing, scripting</h4>
+</section>
+
+
+<section data-state="apps20"><style>.apps20 header:after { content: "Batch Processing: Theory"; }</style>
+<p>Manual analysis (while sometimes necessary) can be laborious, error prone and not provide the provenance required. Batch processing allows the same processing to be run on multiple images.</p>
+
+<p>The built-in <code>[Process > Batch]</code> menu has lots of useful functions:</p>
+<img class="half" src="img-ia/batch_01.png"/>
+</section> 
+
+<section data-state="apps21"><style>.apps21 header:after { content: "Batch Processing: Data"; }</style>
+<p>We'll use a subset of dataset BBBC008 from the <a href="https://data.broadinstitute.org/bbbc/BBBC008/" target="_blank">Broad Bioimage Benchmark Collection</a></p>
+<ul><li>Download the zip file from <a href="material/BBBC008_partial.zip">here</a> to the desktop</li><li>Unzip (right click and "Extract All") to end up with a folder on your desktop called <code>BBBC008_partial</code></li></ul><br>
+<img class="" src="img-ia/batch_04.png"/>
+<ul><li>Make another folder on the desktop called <code>Output</code></li><ul>
+</section> 
+<section data-state="apps22"><style>.apps22 header:after { content: "Batch Processing: Batch Convert"; }</style>
+<p>For simple file conversion, <code>Convert</code> is a very useful tool</p>
+<ul class="twothirds left"><li>Run <code>[Process > Batch > Convert]</code></li>
+<ul><li>Set the Input directory to point to the downloaded files and the Output to the Output folder</li>
+<li>Set the output format to PNG</li>
+<li>Scale the images to 50% (put 0.5 in the box)</li></ul>
+<li>Hit Convert then check the output folder</li>
+</ul>
+<img class="third right" src="img-ia/batch_03.png"/>
+
+<ul class="clear"><li>If you're using proprietary formats check the "Read Using Bio-Formats" box (although this is slower)</li></ul>
+</section> 
+
+<section data-state="apps23"><style>.apps23 header:after { content: "Batch Processing: Basic Macros"; }</style>
+<p>For slightly more complex manipulations try using the <code>Macro</code> interface</p>
+<ul class="half left"><li>Run <code>[Process > Batch > Macro]</code></li>
+<ul><li>Set the Input directory to point to the downloaded files and the Output to the Output folder</li>
+<li>Set the output format to PNG</li>
+<li>From the dropdown box, select <code>Scale</code> and the macro box will populate</li>
+<li>Change the scale fraction to 0.5 and add the line <code>run("Red");</code></li></ul>
+<li>Hit Process then check the output folder</li>
+</ul>
+<img class="half right" src="img-ia/batch_07.png"/>
+</section> 
+<section data-state="apps23"><style>.apps23 header:after { content: "Batch Processing: Basic Macros"; }</style>
+<p>You should see an output folder containing small red-coloured nuclei</p>
+<img class="twothirds" src="img-ia/batch_09.png"/>
+</section> 
+<section data-state="apps23"><style>.apps23 header:after { content: "Batch Processing: Basic Macros"; }</style>
+<p>But how to figure out the commands?</p>
+<img class="fragment half" src="img-ia/batch_08.png"/>
+<p class="fragment">The macro recorder will record most plugins and commands from the menu. Run <code>[Plugins > Macros > Record]</code> then run a command</p>
+</section> 
+<section data-state="apps23"><style>.apps23 header:after { content: "Batch Processing: Batch Macros"; }</style>
+<div class="twothirds left">
+<p>Pop quiz!</p>
+<ul><p>Use the macro recorder and The Batch Macro function to:
+<li>Calibrate the image to 0.1 microns per pixel (<a href="#/19"><i class="fa fa-external-link"></i></a>)</li>
+<li>Draw a 10&mu;m green scale bar in the bottom left corner (<a href="#/36"><i class="fa fa-external-link"></i></a>)</li>
+<li class="fragment">[BONUS MARKS 1] Also write the filename onto each image (in red) (<a href="https://imagej.nih.gov/ij/developer/macro/functions.html#getTitle"><i class="fa fa-external-link"></i></a>)</li>
+<li class="fragment">[BONUS MARKS 2] Print out the filename and spot count to the log (<a href="https://imagej.nih.gov/ij/docs/guide/146-29.html#sub:Find-Maxima"><i class="fa fa-external-link"></i></a>)</li>
+</li></ul>
+</div>
+<img class="third right" src="img-ia/batch_12.png"/>
+<ul class="left clear"><li>Answers in the next slide - DON'T PEEK UNLESS YOU'RE STUCK :)</li></ul>
+</section> 
+
+<section data-state="apps23"><style>.apps23 header:after { content: "Batch Processing: Basic Macros"; }</style>
+<div class="twothirds left">
+<p>Basic test</p>
+<!-- <pre><code data-trim data-noescape> -->
+<pre><code data-trim data-noescape>
+//-- Calibrate
+run("Properties...", "unit=um pixel_width=0.1 pixel_height=0.1");
+//-- Add the scale bar
+run("RGB Color");
+run("Scale Bar...", "width=10 height=10 font=30 color=Green background=None location=[Lower Left]");
+</code></pre>
+<div data-fragment-index="5" class="fragment">
+<p>Advanced test</p>
+<pre><code data-trim data-noescape>
+//-- [BONUS 2] Estimate and print the counts
+run("Find Maxima...", "noise=10 output=[Point Selection]");
+getSelectionCoordinates(xPos,yPos);
+print("Image:  "+getTitle()+" has "+xPos.length+" objects");
+run("Select None");
+
+//-- [BONUS 1] Add the title
+run("RGB Color");
+setFont("SansSerif", 18, "antialiased");
+setColor("red");
+drawString(getTitle(), 20, 30);
+
+//-- Calibrate
+run("Properties...", "unit=um pixel_width=0.1 pixel_height=0.1");
+//-- Add the scale bar
+run("RGB Color");
+run("Scale Bar...", "width=10 height=10 font=30 color=Green background=None location=[Lower Left]");
+</code></pre>
+</div>
+</div>
+<img data-fragment-index="5" class="fragment third right" src="img-ia/batch_10.png"/><img data-fragment-index="5" class="fragment third right" src="img-ia/batch_11.png"/>
+</section>
+
+<section data-menu-title="Scripting" data-state="apps24z"><style>.apps24z header:after { content: ""; }</style>
+<h1>Scripting</h1>
+<h4>A very brief foray into scripts</h4>
+</section>
+
+<section data-state="apps24"><style>.apps24 header:after { content: "Scripting"; }</style>
+<p>Scripting is useful for running the same process multiple times or having a record of how images were processed to get a particular output</p>
+<p>Fiji supports many scripting languages including Java, Python, Scala, Ruby, Clojure and Groovy through the script editor which also recognises the macro language from the previous example (which we'll be using)</p>
+<!-- <p class="fragment" >Run <code>[Plugins > New > Macro]</code></p></div> -->
+<img class="half fragment" src="img-ia/script01.PNG"/>
+</section>
+
+<section data-state="apps24"><style>.apps24 header:after { content: "Scripting"; }</style>
+<p>As an example, we're going to (manually) create a montage from a three channel image, then see what the script looks like</p>
+<img class="third" src="img-ia/script3.png"/>
+<ul>
+<li>Open <a href="material/06-multichannel.tif"><code>06-MultiChannel.tif</code></a></li>
+<li>Open the macro recorder: <code>[Plugins > Macros > Record]</code></li>
+</ul>
+</section>
+
+<section data-state="apps24"><style>.apps24 header:after { content: "Scripting"; }</style>
+<ul style="font-size:70%" class="twothirds">
+<li>(If opening via URL run <code>[Image > Hyperstacks > Stack to Hyperstack]</code>)</li>
+<li>Open the channels tool <code>[Image > Color > Channels Tool]</code> and set the mode to <code>grayscale</code></li>
+<li>Run <code>[Image > Type > RGB color]</code></li>
+<li>Rename this image to <code>channels</code> with <code>[Image > Rename]</code></li>
+<li>Select the original stack, and using the channels tool, set the mode to <code>composite</code></li>
+<li>Run <code>[Image > Type > RGB color]</code></li>
+<li>Rename this image to <code>merge</code> with <code>[Image > Rename]</code></li>
+<li>Close the original (it should be the only 8-bit image open (check the Info bar!)</li>
+<li>Run <code>[Image > Stacks > Tools > Concatenate]</code> and select Channels and merge in the two boxes (see right)</li>
+<li>Run <code>[Image > Stacks > Make Montage]</code> change the border width to 3 then hit OK</li>
+<!-- <li>Run <code>[File > Save As > PNG]</code> and save the file in the output directory</li> -->
+</ul>
+<img class="third" src="img-ia/script02.png">
+<p class="clear fragment">Got it? Have a look at the Macro Recorder and see if you can see the commands you ran</p>
+</section>
+
+<section data-state="apps24"><style>.apps24 header:after { content: "Scripting"; }</style>
+<p>Open the script editor with <code>[Plugins > New > Script]</code> and copy in the following code:</p>
+<pre><code class="java" data-trim data-noescape>
+//-- Record the filename
+imageName=getTitle();
+print("Processing: "+imageName);
+//-- Display the stack in greyscale, create an RGB version, rename
+Stack.setDisplayMode("grayscale");
+run("RGB Color");
+rename("channels");
+//-- Select the original image
+selectWindow(imageName);
+//-- Display the stack in composite, create an RGB version, rename
+Stack.setDisplayMode("composite");
+run("RGB Color");
+rename("merge");
+//-- Close the original
+close(imageName);
+//-- Put the two RGB images together
+run("Concatenate...", "  title=newStack open image1=channels image2=merge");
+//-- Create a montage
+run("Make Montage...", "columns=4 rows=1 scale=0.50 border=3");
+//-- Close the stack (from concatenation)
+close(newStack);
+</code></pre>
+<p>Open the file again and hit Run</p>
+<p class="subtle fragment">Comments, variables, print, active window</p>
+</section>
+
+<section data-state="apps24"><style>.apps24 header:after { content: "Scripting"; }</style>
+<p>This script operates on an open image but it's easily converted to a batch processing script using the built in templates:</p>
+<img class="half" src="img-ia/script04.png"/>
+<p>The full script is <a href="material/Process_Folder_montage.ijm">here</a>. I added these lines at the top and bottom:</p>
+<pre><code class="java">open(input + File.separator + file);</code></pre>
+<pre><code class="java">saveAs("png", output + File.separator + replace(file, suffix, ".png"));
+close("*");
+</code></pre>
+</section>
+
+<section data-state="apps24"><style>.apps24 header:after { content: "Scripting"; }</style>
+<p>If you're interested in a scripting workshop, let me know! We can put one together in the near future.</p>
+<p>In the meantime:</p>
+<ul>
+<li><a href="https://imagej.nih.gov/ij/developer/macro/macros.html" target="_blank">ImageJ language reference</a></li>
+<li><a href="https://imagej.nih.gov/ij/developer/macro/functions.html" target="_blank">ImageJ function reference</a></li>
+<li><a href="https://postacquisition.wordpress.com/2017/08/29/staying-in-version-control/" target="_blank">Getting started with Version Control for scripting</a></li>
+</ul>
+</section>
 
 <section data-state="end"><style>.end header:after { content: "That's all!"; }</style>
 	<p>Thank you for your attention!</p>
